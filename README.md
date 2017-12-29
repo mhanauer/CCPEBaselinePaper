@@ -48,13 +48,14 @@ Figure out a way to turn a variable like month into a factor and run multiple of
 JAILTIME_N = 99 means they did not go to jail which needs to be changed to 0
 ```{r}
 CCPEBaseline = data.frame(apply(gpraAdultBase, 2, function(x)(ifelse(x == 97, NA, ifelse(x == 98, NA, ifelse(x == 99, 0,x))))))
-# start with these RSKCIG CIG30D MJ30D RSKMJ BINGE530D RSKALC
+# start with these RSKCIG CIG30D MJ30D RSKMJ BINGE530D RSKALC, 
+#INTERVENTION_A, INTERVENTION_B,GENDER, YOB, E_NONHISPAN, SEX_PR, SPEAK_ENG, EDLEVEL_N, EMPLOY_N, JAILTIME_N
 
-CCPEBaseline = data.frame(CCPEBaseline$RSKCIG, CCPEBaseline$CIG30D, CCPEBaseline$MJ30D, CCPEBaseline$RSKMJ, CCPEBaseline$BINGE530D, CCPEBaseline$RSKALC)
-
+CCPEBaseline = data.frame(CCPEBaseline$RSKCIG, CCPEBaseline$CIG30D, CCPEBaseline$MJ30D, CCPEBaseline$RSKMJ, CCPEBaseline$BINGE530D, CCPEBaseline$RSKALC, CCPEBaseline$INTERVENTION_A, CCPEBaseline$INTERVENTION_B)
+#CCPEBaseline$GENDER, CCPEBaseline$YOB, CCPEBaseline$E_NONHISPAN, CCPEBaseline$SPEAK_ENG, CCPEBaseline$EDLEVEL_N, CCPEBaseline$EMPLOY_N, CCPEBaseline$JAILTIME_N
 
 m=5
-a.out = amelia(x = CCPEBaseline, m=m, ords = c("CCPEBaseline.RSKCIG", "CCPEBaseline.RSKMJ", "CCPEBaseline.RSKALC"), logs = c("CCPEBaseline.CIG30D", "CCPEBaseline.MJ30D", "CCPEBaseline.BINGE530D"))
+a.out = amelia(x = CCPEBaseline, m=m, ords = c("CCPEBaseline.RSKCIG", "CCPEBaseline.RSKMJ", "CCPEBaseline.RSKALC"), logs = c("CCPEBaseline.CIG30D", "CCPEBaseline.MJ30D", "CCPEBaseline.BINGE530D"), noms = c("CCPEBaseline.INTERVENTION_A", "CCPEBaseline.INTERVENTION_B"))
 head(a.out$imputations$imp1)
 
 ```
