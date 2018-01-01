@@ -241,6 +241,8 @@ cigBoth$Zstat = cigBoth$ParameterEstimate/cigBoth$StandardError
 cigBoth$PValue = round(pnorm(-abs(cigBoth$Zstat)),3)
 cigBoth = round(cigBoth,3)
 cigBoth
+
+# Need to exp() all parameters to get the incident rate ratio.
 ```
 Mar Models
 ```{r}
@@ -396,7 +398,7 @@ alcoholBoth$Zstat = alcoholBoth$ParameterEstimate/alcoholBoth$StandardError
 alcoholBoth$PValue = round(pnorm(-abs(alcoholBoth$Zstat)),3)
 alcoholBoth = round(alcoholBoth,3)
 alcoholBoth
-summary(a.out)
+
 ```
 
 
