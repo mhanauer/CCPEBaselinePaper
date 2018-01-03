@@ -213,6 +213,10 @@ allMeansSDsCom = mi.meld(q = allMeans, se = allSDs)
 allMeansSDsCom = t(as.data.frame(allMeansSDsCom))
 write.csv(allMeansSDsCom, "allMeansSDsCom.csv")
 ```
+$$ ln({CIG30D_{i}) = exp(\beta_{0}) + exp(\beta_{1}(RSKCIG_{i})) + exp(\beta_{x}(X_{i})) + e_{i}}~~~ (1)$$
+
+$$ ln({MJ30D{i}) = exp(\beta_{0}) + exp(\beta_{1}(RSKMJ{i})) + exp(\beta_{x}(X_{i})) + e_{i}}~~~ (2)$$
+$$ ln({BINGE530D{i}) = exp(\beta_{0}) + exp(\beta_{1}(RSKALC{i})) + exp(\beta_{x}(X_{i})) + e_{i}}~~~ (3)$$
 
 
 Cig Models
@@ -297,10 +301,6 @@ cigBoth
 ```
 All equations and interpretation.  The model below shows the negative binomial model where the natural log (i.e. ln) of the number of days the respondent did the dependent variable (i.e. smoked cigarettes, smoked marijuana, binge drank alcohol) in the past 30 days is regressed upon the variable of interest perception of risk of the dependent variable by the same respondent which is exponentiated to improve interpretation.  We also included a vector of covariates (X) with X number of beta coefficients to account for confounding factors.  Finally, there is the error term which is the difference between the respondent's response and the predicted value.
  
-$$ ln({CIG30D_{i}) = exp(\beta_{0}) + exp(\beta_{1}(RSKCIG_{i})) + exp(\beta_{x}(X)) + e_{ij}}~~~ (1)$$
-
-$$ ln({MJ30D{i}) = exp(\beta_{0}) + exp(\beta_{1}(RSKMJ{i})) + exp(\beta_{x}(X)) + e_{ij}}~~~ (2)$$
-$$ ln({BINGE530D{i}) = exp(\beta_{0}) + exp(\beta_{1}(RSKALC{i})) + exp(\beta_{x}(X)) + e_{ij}}~~~ (3)$$
 
 Mar Models
 ```{r}
