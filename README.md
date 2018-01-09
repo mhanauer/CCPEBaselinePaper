@@ -32,19 +32,21 @@ Assign them to the correct type
 Check the distributons of everything and make changes
 Figure out a way to turn a variable like month into a factor and run multiple of them
 JAILTIME_N = 99 means they did not go to jail which needs to be changed to 0
+
+Need to drop employment variable.  Need to include religion
 ```{r}
 CCPEBaseline = data.frame(apply(gpraAdultBase, 2, function(x)(ifelse(x == 97, NA, ifelse(x == 98, NA, ifelse(x == 99, 0,x))))))
 
 
-CCPEBaseline = data.frame(CCPEBaseline$RSKCIG, CCPEBaseline$CIG30D, CCPEBaseline$MJ30D, CCPEBaseline$RSKMJ, CCPEBaseline$BINGE530D, CCPEBaseline$RSKALC, CCPEBaseline$R_WHITE_N, CCPEBaseline$YOB, CCPEBaseline$EDLEVEL_N, CCPEBaseline$EMPLOY_N, CCPEBaseline$HINCOMEO_N, CCPEBaseline$SEX_PR, CCPEBaseline$GENDER)
+CCPEBaseline = data.frame(CCPEBaseline$RSKCIG, CCPEBaseline$CIG30D, CCPEBaseline$MJ30D, CCPEBaseline$RSKMJ, CCPEBaseline$BINGE530D, CCPEBaseline$RSKALC, CCPEBaseline$R_WHITE_N, CCPEBaseline$YOB, CCPEBaseline$EDLEVEL_N, CCPEBaseline$REL_IMP, CCPEBaseline$HINCOMEO_N, CCPEBaseline$SEX_PR, CCPEBaseline$GENDER)
 TestMCARNormality(data = CCPEBaseline)
 
 # Here I am getting the number of people before imputation 
 dim(CCPEBaseline)
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
-dim(CCPEBaselineTest)
+dim(CCPEBaseline)
 
-colnames(CCPEBaseline) = c("RSKCIG", "CIG30D", "MJ30D", "RSKMJ", "BINGE530D", "RSKALC", "R_WHITE_N", "YOB", "EDLEVEL_N", "EMPLOY_N", "HINCOMEO_N", "SEX_PR", "GENDER")
+colnames(CCPEBaseline) = c("RSKCIG", "CIG30D", "MJ30D", "RSKMJ", "BINGE530D", "RSKALC", "R_WHITE_N", "YOB", "EDLEVEL_N", "REL_IMP", "HINCOMEO_N", "SEX_PR", "GENDER")
 
 GENDER = data.frame(CCPEBaseline$GENDER)
 colnames(GENDER) = c("GENDER")
@@ -64,31 +66,31 @@ No missing data model
 ```{r}
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
-cig = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER , data = CCPEBaseline)
+cig = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(cig)
 
 # Test of model fit relative to a Poisson
-cigPos = glm(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline)
+cigPos = glm(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline)
 summary(cigPos)
 mean(CCPEBaseline$CIG30D)
 var(CCPEBaseline$CIG30D)
 dispersiontest(cigPos, alternative = c("greater")) 
 
-mar = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline)
+mar = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline)
 summary(mar)
 
 # Test of model fit relative to a Poisson
-marPos = glm(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline)
+marPos = glm(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline)
 summary(marPos)
 mean(CCPEBaseline$MJ30D)
 var(CCPEBaseline$MJ30D)
 dispersiontest(marPos, alternative = c("greater")) 
 
-alcohol = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline)
+alcohol = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline)
 summary(alcohol)
 
 # Test of model fit relative to a Poisson
-alcoholPos = glm(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline)
+alcoholPos = glm(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline)
 summary(alcoholPos)
 mean(CCPEBaseline$BINGE530D)
 var(CCPEBaseline$BINGE530D)
@@ -98,7 +100,7 @@ dispersiontest(alcoholPos, alternative = c("greater"))
 Need to impute to the extra ~200 people
 ```{r}
 m=10
-a.out = amelia(x = CCPEBaseline, m=m, ords = c("RSKCIG", "RSKMJ", "RSKALC", "HINCOMEO_N", "EDLEVEL_N", "EMPLOY_N", "YOB", "CIG30D", "MJ30D", "BINGE530D"), noms = c("GENDER", "R_WHITE_N", "SEX_PR"))
+a.out = amelia(x = CCPEBaseline, m=m, ords = c("RSKCIG", "RSKMJ", "RSKALC", "HINCOMEO_N", "EDLEVEL_N", "REL_IMP", "YOB", "CIG30D", "MJ30D", "BINGE530D"), noms = c("GENDER", "R_WHITE_N", "SEX_PR"))
 head(a.out$imputations$imp1)
 head(a.out$imputations$imp2)
 head(a.out$imputations$imp3)
@@ -222,51 +224,51 @@ $$ ln({BINGE530D{i}) = exp(\beta_{0}) + exp(\beta_{1}(RSKALC{i})) + exp(\beta_{x
 Cig Models
 ```{r}
 # Cig Poisson model.  Model is overdipsered so need negative binomal
-cig1 = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER , data = CCPEBaseline1)
+cig1 = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER , data = CCPEBaseline1)
 summary(cig1)
 
 # Test of model fit relative to a Poisson
-cigPos1 = glm(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline1)
+cigPos1 = glm(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline1)
 summary(cigPos1)
 mean(CCPEBaseline1$CIG30D)
 var(CCPEBaseline1$CIG30D)
 dispersiontest(cigPos1, alternative = c("greater")) 
 
-cig2 = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER , data = CCPEBaseline2)
+cig2 = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER , data = CCPEBaseline2)
 summary(cig2)
 
 # Test of model fit relative to a Poisson
-cigPos2 = glm(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline2)
+cigPos2 = glm(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline2)
 summary(cigPos2)
 mean(CCPEBaseline2$CIG30D)
 var(CCPEBaseline2$CIG30D)
 dispersiontest(cigPos2, alternative = c("greater")) 
 
-cig3 = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER , data = CCPEBaseline3)
+cig3 = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER , data = CCPEBaseline3)
 summary(cig3)
 
 # Test of model fit relative to a Poisson
-cigPos3 = glm(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline3)
+cigPos3 = glm(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline3)
 summary(cigPos3)
 mean(CCPEBaseline3$CIG30D)
 var(CCPEBaseline3$CIG30D)
 dispersiontest(cigPos3, alternative = c("greater")) 
 
-cig4 = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline4)
+cig4 = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline4)
 summary(cig4)
 
 # Test of model fit relative to a Poisson
-cigPos4 = glm(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline4)
+cigPos4 = glm(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline4)
 summary(cigPos4)
 mean(CCPEBaseline4$CIG30D)
 var(CCPEBaseline4$CIG30D)
 dispersiontest(cigPos4, alternative = c("greater")) 
 
-cig5 = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER , data = CCPEBaseline5)
+cig5 = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER , data = CCPEBaseline5)
 summary(cig5)
 
 # Test of model fit relative to a Poisson
-cigPos5 = glm(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline5)
+cigPos5 = glm(CIG30D ~ RSKCIG + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline5)
 summary(cigPos5)
 mean(CCPEBaseline5$CIG30D)
 var(CCPEBaseline5$CIG30D)
@@ -304,51 +306,51 @@ All equations and interpretation.  The model below shows the negative binomial m
 
 Mar Models
 ```{r}
-mar1 = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline1)
+mar1 = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline1)
 summary(mar1)
 
 # Test of model fit relative to a Poisson
-marPos1 = glm(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline1)
+marPos1 = glm(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline1)
 summary(marPos1)
 mean(CCPEBaseline1$MJ30D)
 var(CCPEBaseline1$MJ30D)
 dispersiontest(marPos1, alternative = c("greater")) 
 
-mar2 = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline2)
+mar2 = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline2)
 summary(mar2)
 
 # Test of model fit relative to a Poisson
-marPos2 = glm(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline2)
+marPos2 = glm(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline2)
 summary(marPos2)
 mean(CCPEBaseline2$MJ30D)
 var(CCPEBaseline2$MJ30D)
 dispersiontest(marPos2, alternative = c("greater")) 
 
-mar3 = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline3)
+mar3 = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline3)
 summary(mar3)
 
 # Test of model fit relative to a Poisson
-marPos3 = glm(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline3)
+marPos3 = glm(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline3)
 summary(marPos3)
 mean(CCPEBaseline3$MJ30D)
 var(CCPEBaseline3$MJ30D)
 dispersiontest(marPos3, alternative = c("greater")) 
 
-mar4 = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline4)
+mar4 = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline4)
 summary(mar4)
 
 # Test of model fit relative to a Poisson
-marPos4 = glm(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline4)
+marPos4 = glm(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline4)
 summary(marPos4)
 mean(CCPEBaseline4$MJ30D)
 var(CCPEBaseline4$MJ30D)
 dispersiontest(marPos4, alternative = c("greater")) 
 
-mar5 = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline5)
+mar5 = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline5)
 summary(mar5)
 
 # Test of model fit relative to a Poisson
-marPos5 = glm(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline5)
+marPos5 = glm(MJ30D ~ RSKMJ + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline5)
 summary(marPos5)
 mean(CCPEBaseline5$MJ30D)
 var(CCPEBaseline5$MJ30D)
@@ -382,51 +384,51 @@ marBoth
 
 Alcohol findgs
 ```{r}
-alcohol1 = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline1)
+alcohol1 = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline1)
 summary(alcohol1)
 
 # Test of model fit relative to a Poisson
-alcoholPos1 = glm(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline1)
+alcoholPos1 = glm(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline1)
 summary(alcoholPos1)
 mean(CCPEBaseline1$BINGE530D)
 var(CCPEBaseline1$BINGE530D)
 dispersiontest(alcoholPos1, alternative = c("greater")) 
 
-alcohol2 = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline2)
+alcohol2 = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline2)
 summary(alcohol2)
 
 # Test of model fit relative to a Poisson
-alcoholPos2 = glm(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline2)
+alcoholPos2 = glm(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline2)
 summary(alcoholPos2)
 mean(CCPEBaseline2$BINGE530D)
 var(CCPEBaseline2$BINGE530D)
 dispersiontest(alcoholPos2, alternative = c("greater")) 
 
-alcohol3 = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline3)
+alcohol3 = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline3)
 summary(alcohol3)
 
 # Test of model fit relative to a Poisson
-alcoholPos3 = glm(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline3)
+alcoholPos3 = glm(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline3)
 summary(alcoholPos3)
 mean(CCPEBaseline3$BINGE530D)
 var(CCPEBaseline3$BINGE530D)
 dispersiontest(alcoholPos3, alternative = c("greater")) 
 
-alcohol4 = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline4)
+alcohol4 = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline4)
 summary(alcohol4)
 
 # Test of model fit relative to a Poisson
-alcoholPos4 = glm(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline4)
+alcoholPos4 = glm(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline4)
 summary(alcoholPos4)
 mean(CCPEBaseline4$BINGE530D)
 var(CCPEBaseline4$BINGE530D)
 dispersiontest(alcoholPos4, alternative = c("greater")) 
 
-alcohol5 = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline5)
+alcohol5 = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, data = CCPEBaseline5)
 summary(alcohol5)
 
 # Test of model fit relative to a Poisson
-alcoholPos5 = glm(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + EMPLOY_N + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline5)
+alcoholPos5 = glm(BINGE530D ~ RSKALC + R_WHITE_N + YOB + EDLEVEL_N + REL_IMP + HINCOMEO_N + SEX_PR+ GENDER, family = "poisson", data = CCPEBaseline5)
 summary(alcoholPos5)
 mean(CCPEBaseline5$BINGE530D)
 var(CCPEBaseline5$BINGE530D)
