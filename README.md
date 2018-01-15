@@ -34,34 +34,69 @@ Figure out a way to turn a variable like month into a factor and run multiple of
 JAILTIME_N = 99 means they did not go to jail which needs to be changed to 0
 
 Need to drop employment variable.  Need to include religion
+
+Best I can do for age is 2018 - YOB
 ```{r}
 CCPEBaseline = data.frame(apply(gpraAdultBase, 2, function(x)(ifelse(x == 97, NA, ifelse(x == 98, NA, ifelse(x == 99, 0,x))))))
 
 
-CCPEBaseline = data.frame(CCPEBaseline$RSKCIG, CCPEBaseline$CIG30D, CCPEBaseline$MJ30D, CCPEBaseline$RSKMJ, CCPEBaseline$BINGE530D, CCPEBaseline$RSKALC, CCPEBaseline$R_WHITE_N, CCPEBaseline$YOB, CCPEBaseline$EDLEVEL_N, CCPEBaseline$REL_IMP, CCPEBaseline$HINCOMEO_N, CCPEBaseline$SEX_PR, CCPEBaseline$GENDER)
-TestMCARNormality(data = CCPEBaseline)
+CCPEBaseline = data.frame(CCPEBaseline$RSKCIG, CCPEBaseline$CIG30D, CCPEBaseline$MJ30D, CCPEBaseline$RSKMJ, CCPEBaseline$BINGE530D, CCPEBaseline$RSKALC, CCPEBaseline$R_WHITE_N, CCPEBaseline$REL_IMP, CCPEBaseline$HINCOMEO_N, CCPEBaseline$SEX_PR, CCPEBaseline$GENDER, CCPEBaseline$YOB)
+#TestMCARNormality(data = CCPEBaseline)
+
 
 # Here I am getting the number of people before imputation 
 dim(CCPEBaseline)
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
 
-colnames(CCPEBaseline) = c("RSKCIG", "CIG30D", "MJ30D", "RSKMJ", "BINGE530D", "RSKALC", "R_WHITE_N", "YOB", "EDLEVEL_N", "REL_IMP", "HINCOMEO_N", "SEX_PR", "GENDER")
+colnames(CCPEBaseline) = c("RSKCIG", "CIG30D", "MJ30D", "RSKMJ", "BINGE530D", "RSKALC", "R_WHITE_N", "REL_IMP", "HINCOMEO_N", "SEX_PR", "GENDER", "YOB")
 
-GENDER = data.frame(CCPEBaseline$GENDER)
-colnames(GENDER) = c("GENDER")
-GENDER = data.frame(apply(GENDER, 2, function(x)(ifelse(x ==1, 1, 0))))
-
-SEX_PR = data.frame(CCPEBaseline$SEX_PR)
-colnames(SEX_PR) = c("SEX_PR")
-SEX_PR = data.frame(apply(SEX_PR, 2, function(x)(ifelse(x ==1, 1, 0))))
 CCPEBaselineFreq = describe(CCPEBaseline)
-
+write.csv(CCPEBaseline, "CCPEBaseline.csv", row.names = FALSE)
+CCPEBaseline = read.csv("CCPEBaseline.csv", header = TRUE)
 ## Get correlations
-CCPEBaselineCor= data.frame(cor(CCPEBaseline))
-CCPEBaselineCor = round(CCPEBaselineCor, 3)
-write.csv(CCPEBaselineCor, "CCPEBaselineCor.csv")
+#CCPEBaselineCor= data.frame(cor(CCPEBaseline))
+#CCPEBaselineCor = round(CCPEBaselineCor, 3)
+#write.csv(CCPEBaselineCor, "CCPEBaselineCor.csv")
 ```
+Drop anyone who is not male or female.  So subset the data where gender equals 1 or 2
+Lose 3 total people
+```{r}
+CCPEBaseline =subset(CCPEBaseline, GENDER == 1 | GENDER == 2)
+dim(CCPEBaseline)
+
+CCPEBaseline$GENDER = ifelse(CCPEBaseline$GENDER == 1,1,0)
+
+```
+Now change YOB to AGE by subtracting 2018
+```{r}
+CCPEBaseline$AGE = 2018-CCPEBaseline$YOB
+```
+Change home income to split on something $30,000 or lower is low income.
+Change sex orientation to straight or non-straight
+```{r}
+count(CCPEBaseline$HINCOMEO_N)
+CCPEBaseline$INCOME = ifelse(CCPEBaseline$HINCOMEO_N == 1, 1, ifelse(CCPEBaseline$HINCOMEO_N == 2, 1, 0))
+CCPEBaseline$INCOME
+
+CCPEBaseline$SEX_PR = ifelse(CCPEBaseline$SEX_PR ==1, 1, 0)
+CCPEBaseline$SEX_PR
+```
+Now we need to mean center all ordinal and continuous variables
+#
+```{r}
+CCPEBaselineMeanCenter = data.frame(CCPEBaseline$RSKCIG, CCPEBaseline$CIG30D, CCPEBaseline$MJ30D, CCPEBaseline$RSKMJ, CCPEBaseline$BINGE530D, CCPEBaseline$RSKALC, CCPEBaseline$INCOME, CCPEBaseline$AGE, CCPEBaseline$REL_IMP)
+CCPEBaselineMeanCenter = scale(CCPEBaselineMeanCenter, scale = FALSE)
+CCPEBaseline = data.frame(CCPEBaselineMeanCenter, CCPEBaseline$R_WHITE_N, CCPEBaseline$SEX_PR, CCPEBaseline$GENDER)
+CCPEBaseline
+colnames(CCPEBaseline) = c("RSKCIG", "CIG30D", "MJ30D", "RSKMJ", "BINGE530D", "RSKALC", "INCOME", "AGE", "REL_IMP", "R_WHITE_N", "SEX_PR", "GENDER")
+
+describe(CCPEBaseline)
+```
+
+
+
+
 No missing data model
 ```{r}
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
