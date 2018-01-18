@@ -112,43 +112,43 @@ Cig model looking for interactions
 # Race
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
-cig = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + RSKCIG*R_WHITE_N + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
+cig = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + CenterRSKCIG*CenterR_WHITE_N + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(cig)
 
 # Age
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
-cig = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + RSKCIG*AGE + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
+cig = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + CenterRSKCIG*CenterAGE + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(cig)
 
 # Religon is sig
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
-cig = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + RSKCIG*REL_IMP + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
+cig = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + CenterRSKCIG*CenterREL_IMP + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(cig)
 
 # Income
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
-cig = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + RSKCIG*REL_IMP + RSKCIG*INCOME + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
+cig = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + CenterRSKCIG*CenterREL_IMP + CenterRSKCIG*CenterINCOME + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(cig)
 
 # Sex orien
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
-cig = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + RSKCIG*REL_IMP + RSKCIG*SEX_PR + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
+cig = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + CenterRSKCIG*CenterREL_IMP + CenterRSKCIG*CenterSEX_PR + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(cig)
 
 # Gender
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
-cig = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + RSKCIG*REL_IMP + RSKCIG*GENDER + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
+cig = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + CenterRSKCIG*CenterREL_IMP + CenterRSKCIG*CenterGENDER + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(cig)
 
 # Final model no impute
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
-cig = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + RSKCIG*REL_IMP + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
+cig = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + CenterRSKCIG*REL_IMP + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(cig)
 ```
 Mar model
@@ -156,43 +156,43 @@ Mar model
 # Race
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
-mar = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + RSKMJ*R_WHITE_N + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
+mar = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + CenterRSKMJ*CenterR_WHITE_N + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(mar)
 
 # Age
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
-mar = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + RSKMJ*AGE + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
+mar = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + CenterRSKMJ*CenterAGE + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(mar)
 
 # Religon 
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
-mar = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + RSKMJ*REL_IMP + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
+mar = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + CenterRSKMJ*CenterREL_IMP + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(mar)
 
 # Income is sig
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
-mar = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N  + RSKMJ*INCOME + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
+mar = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N  + CenterRSKMJ*CenterINCOME + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(mar)
 
 # Sex orien
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
-mar = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + RSKMJ*INCOME + RSKMJ*SEX_PR + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
+mar = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + CenterRSKMJ*CenterINCOME + CenterRSKMJ*CenterSEX_PR + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(mar)
 
 # Gender is sig 
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
-mar = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + RSKMJ*INCOME + RSKMJ*GENDER + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
+mar = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + CenterRSKMJ*CenterINCOME + CenterRSKMJ*CenterGENDER + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(mar)
 
 # Final model no impute
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
-mar = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + RSKMJ*INCOME + RSKMJ*GENDER + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
+mar = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + CenterRSKMJ*CenterINCOME + CenterRSKMJ*CenterGENDER + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(mar)
 
 ```
@@ -201,37 +201,37 @@ Binge drinking interaction testing
 # Race
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
-alcohol = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N + RSKALC*R_WHITE_N + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
+alcohol = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N + CenterRSKALC*CenterR_WHITE_N + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(alcohol)
 
 # Age
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
-alcohol = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N + RSKALC*AGE + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
+alcohol = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N + CenterRSKALC*CenterAGE + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(alcohol)
 
 # Religon 
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
-alcohol = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N + RSKALC*REL_IMP + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
+alcohol = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N + CenterRSKALC*CenterREL_IMP + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(alcohol)
 
 # Income
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
-alcohol = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N + RSKALC*INCOME + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
+alcohol = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N + CenterRSKALC*CenterINCOME + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(alcohol)
 
 # Sex orien
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
-alcohol = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N + RSKALC*SEX_PR + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
+alcohol = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N + CenterRSKALC*CenterSEX_PR + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(alcohol)
 
 # Gender
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
-alcohol = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N  + RSKALC*GENDER + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
+alcohol = glm.nb(BINGE530D ~ RSKALC + R_WHITE_N  + CenterRSKALC*CenterGENDER + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(alcohol)
 
 # Final model no impute
@@ -462,22 +462,22 @@ $$ ln({BINGE530D{i}) = exp(\beta_{0}) + exp(\beta_{1}(RSKALC{i})) + exp(\beta_{x
 
 Cig Models Comparison with final with listwise deletion
 ```{r}
-#cig = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + RSKCIG*REL_IMP + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
+#cig = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + CenterRSKCIG*CenterREL_IMP + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(cig)
 
-cig1 = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + RSKCIG*REL_IMP + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline1)
+cig1 = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + CenterRSKCIG*CenterREL_IMP + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline1)
 summary(cig1)
 
-cig2 = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + RSKCIG*REL_IMP + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline2)
+cig2 = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + CenterRSKCIG*CenterREL_IMP + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline2)
 summary(cig2)
 
-cig3 = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + RSKCIG*REL_IMP + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline3)
+cig3 = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + CenterRSKCIG*CenterREL_IMP + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline3)
 summary(cig3)
 
-cig4 = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + RSKCIG*REL_IMP + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline4)
+cig4 = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + CenterRSKCIG*CenterREL_IMP + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline4)
 summary(cig4)
 
-cig5 = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + RSKCIG*REL_IMP + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline5)
+cig5 = glm.nb(CIG30D ~ RSKCIG + R_WHITE_N + CenterRSKCIG*CenterREL_IMP + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline5)
 summary(cig5)
 
 cig1 = summary(cig1)
@@ -511,22 +511,22 @@ All equations and interpretation.  The model below shows the negative binomial m
  
 Mar Models Comparison with final with listwise deletion
 ```{r}
-#mar = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + RSKMJ*REL_IMP + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
+#mar = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + CenterRSKMJ*CenterREL_IMP + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(mar)
 
-mar1 = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + RSKMJ*INCOME + RSKMJ*GENDER + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline1)
+mar1 = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + CenterRSKMJ*CenterINCOME + CenterRSKMJ*CenterGENDER + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline1)
 summary(mar1)
 
-mar2 = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + RSKMJ*INCOME + RSKMJ*GENDER+ AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline2)
+mar2 = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + CenterRSKMJ*CenterINCOME + CenterRSKMJ*CenterGENDER+ AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline2)
 summary(mar2)
 
-mar3 = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + RSKMJ*INCOME + RSKMJ*GENDER + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline3)
+mar3 = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + CenterRSKMJ*CenterINCOME + CenterRSKMJ*CenterGENDER + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline3)
 summary(mar3)
 
-mar4 = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + RSKMJ*INCOME + RSKMJ*GENDER + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline4)
+mar4 = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + CenterRSKMJ*CenterINCOME + CenterRSKMJ*CenterGENDER + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline4)
 summary(mar4)
 
-mar5 = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + RSKMJ*INCOME + RSKMJ*GENDER + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline5)
+mar5 = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + CenterRSKMJ*CenterINCOME + CenterRSKMJ*CenterGENDER + AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline5)
 summary(mar5)
 
 mar1 = summary(mar1)
