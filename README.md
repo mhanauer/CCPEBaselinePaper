@@ -51,9 +51,6 @@ dim(CCPEBaseline)
 
 colnames(CCPEBaseline) = c("RSKCIG", "CIG30D", "MJ30D", "RSKMJ", "BINGE530D", "RSKALC", "R_WHITE_N", "REL_IMP", "INCOME", "SEX_PR", "GENDER", "YOB")
 
-CCPEBaselineFreq = describe(CCPEBaseline)
-write.csv(CCPEBaseline, "CCPEBaseline.csv", row.names = FALSE)
-CCPEBaseline = read.csv("CCPEBaseline.csv", header = TRUE)
 ## Get correlations
 #CCPEBaselineCor= data.frame(cor(CCPEBaseline))
 #CCPEBaselineCor = round(CCPEBaselineCor, 3)
@@ -62,6 +59,8 @@ CCPEBaseline = read.csv("CCPEBaseline.csv", header = TRUE)
 Drop anyone who is not male or female.  So subset the data where gender equals 1 or 2
 Lose 3 total people
 ```{r}
+write.csv(CCPEBaseline, "CCPEBaseline.csv", row.names = FALSE)
+CCPEBaseline = read.csv("CCPEBaseline.csv", header = TRUE)
 CCPEBaseline =subset(CCPEBaseline, GENDER == 1 | GENDER == 2)
 dim(CCPEBaseline)
 
@@ -71,6 +70,7 @@ CCPEBaseline$GENDER = ifelse(CCPEBaseline$GENDER == 1,1,0)
 Now change AGE to AGE by subtracting 2018
 ```{r}
 CCPEBaseline$AGE = 2018-CCPEBaseline$YOB
+CCPEBaseline$YOB = NULL
 ```
 Change home income to split on something $30,000 or lower is low income.
 Change sex orientation to straight or non-straight
@@ -88,7 +88,7 @@ Now we need to mean center all ordinal and continuous variables
 ```{r}
 CCPEBaselineMeanCenter = CCPEBaseline
 head(CCPEBaselineMeanCenter)
-describe(CCPEBaseline)
+
 
 CCPEBaselineMeanCenter = scale(CCPEBaselineMeanCenter, scale = FALSE)
 head(CCPEBaselineMeanCenter)
@@ -126,7 +126,6 @@ CenterRSKALC_CenterAGE = CCPEBaseline$CenterRSKALC*CCPEBaseline$CenterAGE
 
 CCPEBaseline = cbind(CCPEBaseline, CenterRSKCIG_CenterR_WHITE_N, CenterRSKCIG_CenterREL_IMP, CenterRSKCIG_CenterINCOME, CenterRSKCIG_CenterSEX_PR, CenterRSKCIG_CenterGENDER, CenterRSKCIG_CenterAGE, CenterRSKMJ_CenterR_WHITE_N, CenterRSKMJ_CenterREL_IMP, CenterRSKMJ_CenterINCOME, CenterRSKMJ_CenterSEX_PR, CenterRSKMJ_CenterGENDER, CenterRSKMJ_CenterAGE, CenterRSKALC_CenterR_WHITE_N, CenterRSKALC_CenterREL_IMP, CenterRSKALC_CenterINCOME, CenterRSKALC_CenterSEX_PR, CenterRSKALC_CenterGENDER, CenterRSKALC_CenterAGE)
 
-head(CCPEBaseline)
 
 ```
 Demographic model only
