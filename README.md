@@ -286,19 +286,17 @@ dim(CCPEBaseline)
 mar = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + CenterRSKMJ_CenterINCOME + CenterRSKMJ_CenterGENDER +  AGE  + REL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(mar)
 
-
 ```
 Interaction graph for Mar model 
 
-For this model, I need to label the varaibles high and low 
+Don't label the values, because werid things happen.
 ```{r}
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
 CCPEBaselineMarin = CCPEBaseline
 
-CCPEBaselineMarin$INCOME = factor(CCPEBaselineMarin$INCOME, level =c(1,0), labels = c("High", "Low"))
+CCPEBaselineMarin$INCOME = factor(CCPEBaselineMarin$INCOME)
 mar = glm.nb(MJ30D ~ R_WHITE_N + CenterRSKMJ*INCOME + CenterRSKMJ_CenterGENDER +  AGE  + REL_IMP + SEX_PR+ GENDER , data = CCPEBaselineMarin)
-
 
 summary(mar)
 
@@ -321,7 +319,7 @@ Mar.SD$CenterRSKMJ<-factor(Mar.SD$CenterRSKMJ,
                            labels=c("1 SD Below Mean", "Mean", "1 SD Above Mean"))
 
 
-Mar.SD$INCOME<-factor(Mar.SD$INCOME,labels=c("Low", "High"))
+Mar.SD$INCOME<-factor(Mar.SD$INCOME,labels=c("High", "Low"))
 
 Plot.MarIncome<-ggplot(data=Mar.SD, aes(x=CenterRSKMJ, y=fit, group=INCOME))+
   coord_cartesian(ylim = c(0,8))+  
@@ -343,9 +341,10 @@ Plot.MarIncome
 Graph for interaction of gender and mar
 ```{r}
 CCPEBaselineMarin = CCPEBaseline
-
-CCPEBaselineMarin$GENDER = factor(CCPEBaselineMarin$GENDER, level =c(1,0), labels = c("Male", "Female"))
+CCPEBaselineMarin$GENDER = factor(CCPEBaselineMarin$GENDER)
 mar = glm.nb(MJ30D ~  R_WHITE_N + CenterRSKMJ_CenterINCOME + CenterRSKMJ*GENDER +  AGE  + REL_IMP + INCOME + SEX_PR, data = CCPEBaselineMarin)
+
+
 summary(mar)
 
 
@@ -382,7 +381,6 @@ Plot.MarIncome<-ggplot(data=MarGender.SD , aes(x=CenterRSKMJ, y=fit, group=GENDE
         panel.grid.minor=element_blank())+
   scale_fill_grey()
 Plot.MarIncome
-
 
 ```
 
