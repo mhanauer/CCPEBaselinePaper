@@ -1,84 +1,113 @@
 ---
-title: "CenterstoneBCA"
-output: html_document
+title: "HCCPEQuarterlyReports"
+output: ''
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-CCPE Baseline Project RSKCIG, RSKMJ, RSKALC, PEERBINGE_A, WRGBINGE_A, CIG30D, BINGE530D, MJ30D
-Three models that I put together look at the number of days people use alcohol, weed, and cigarettes. All are statistically significantly negative.  Maybe the theory of planned behavior might be a good fit for this data.
-
-1. Impute data 
-2. Include relevant covariates
-3. Rerun with relevant covariates
+First set where the data is located.
 ```{r}
-require(ggplot2)
-require(sandwich)
-require(msm)
-require(foreign)
-require(ggplot2)
-require(MASS)
-library(AER)
-library(BaylorEdPsych)
-library(mvnmle)
-install.packages("MissMech")
-library(MissMech)
-library(plyr)
-CCPEBaseline = data.frame(gpraAdultAll$RSKCIG.x, gpraAdultAll$RSKMJ.x,  gpraAdultAll$RSKALC.x, gpraAdultAll$PEERBINGE_A.x, gpraAdultAll$WRGBINGE_A.x, gpraAdultAll$CIG30D.x,  gpraAdultAll$BINGE530D.x, gpraAdultAll$MJ30D.x)
-CCPEBaseline = data.frame(apply(CCPEBaseline, 2, function(x)ifelse(x == 97, NA, x)))
-head(CCPEBaseline)
-setwd("C:/Users/Matthew.Hanauer/Desktop")
-CCPEBaseline = write.csv(CCPEBaseline, "CCPEBaseline.csv", row.names = FALSE)
-CCPEBaseline = read.csv("CCPEBaseline.csv", header =TRUE)
-head(CCPEBaseline)
-LittleMCAR(CCPEBaseline)
-CCPEBaseline = data.frame(na.omit(CCPEBaseline))
-dim(CCPEBaseline)
-TestMCARNormality(data = CCPEBaseline)
+setwd("T:/prevention/STAFF REPORTS 17-18/Chat HIV    FY2/Evaluation")
+HCCPEDat = read.csv("HCCPEDat.csv", header = TRUE)
+head(HCCPEDat)
 ```
-Impute data
-Get all the variables that you want
-Change all of the 97's, 98, and 99's to NA
-Assign them to the correct type
-Check the distributons of everything and make changes
-Figure out a way to turn a variable like month into a factor and run multiple of them
+How to get matched values.  Need to seperate the data based on INTTYPE.  Then merge according to right merge where right is the 3 month reassesment.  Then only matched people will be included.
 ```{r}
-CCPEBaseline = data.frame(apply(gpraAdultBase, 2, function(x)(ifelse(x == 97, NA, ifelse(x == 98, NA, ifelse(x == 99, NA,x))))))
-
-CCPEBaseline = data.frame(CCPEBaseline[,6], CCPEBaseline[,11:16], CCPEBaseline[35:42])
-
+datBASE = subset(HCCPEDat, INTTYPE ==1)
+dat3month = subset(HCCPEDat, INTTYPE == 3)
+HCCPEDat = merge(dat3month, datBASE, by = "PARTID", all.x = TRUE)
 ```
+Objective A KNOW_HIV, KNOW_SA
 
-
-Need to do a completely missing at random test
+Let us write a function that takes the percentage change and then run all variables through it.  Need to put baseline in first then 3month into the function.
 ```{r}
-# Cig Poisson model.  Model is overdipsered so need negative binomal
-cig = glm.nb(gpraAdultAll.CIG30D.x ~ gpraAdultAll.RSKCIG.x, data = CCPEBaseline)
-summary(cig)
-# Test of model fit relative to a Poisson
-mean(CCPEBaseline$gpraAdultAll.CIG30D.x)
-var(CCPEBaseline$gpraAdultAll.CIG30D.x)
-cigPos = glm(gpraAdultAll.CIG30D.x ~ gpraAdultAll.RSKCIG.x, family = "poisson", data = CCPEBaseline)
-dispersiontest(cigPos, alternative = c("greater")) 
+attach(HCCPEDat)
+head(HCCPEDat)
+pChange = function(x,y){
+  x = mean(x)
+  y = mean(y)
+  round((y-x)/x,2)
+}
+HIVKnowledge = pChange(KNOW_HIV.x, KNOW_HIV.y)
+HIVKnowledge
 
-
-# Marijuana
-mar = glm.nb(gpraAdultAll.MJ30D.x ~ gpraAdultAll.RSKMJ.x, data = CCPEBaseline)
-summary(mar)
-# Test of model fit relative to a Poisson
-mean(CCPEBaseline$gpraAdultAll.MJ30D.x)
-var(CCPEBaseline$gpraAdultAll.MJ30D.x)
-marPos = glm(gpraAdultAll.MJ30D.x ~ gpraAdultAll.RSKMJ.x, family = "poisson", data = CCPEBaseline)
-dispersiontest(marPos, alternative = c("greater"))
-
-# Alcohol
-alcohol = glm.nb(gpraAdultAll.BINGE530D.x ~ gpraAdultAll.RSKALC.x, data = CCPEBaseline)
-summary(alcohol)
-# Test of model fit relative to a Poisson
-mean(CCPEBaseline$gpraAdultAll.BINGE530D.x)
-var(CCPEBaseline$gpraAdultAll.BINGE530D.x)
-alcoholPos = glm(gpraAdultAll.BINGE530D.x ~ gpraAdultAll.RSKALC.x, family = "poisson", data = CCPEBaseline)
-dispersiontest(alcoholPos, alternative = c("greater"))
+SAKnowledge = pChange(KNOW_SA.x, KNOW_SA.y)
+SAKnowledge
 ```
+Objective B SA and HIV Risk
+
+Maybe create a function that sums the total using NA ok and creates a single measure that can then be run throught the pChange function.
+```{r}
+head(HCCPEDat)
+BaseSARisk = data.frame(RSKALC.x, RSKCIG.x, RSKMJ.x)
+compositeFun = function(x){
+  apply(x, 1, sum, na.rm = TRUE)
+}
+BaseSARisk =  compositeFun(baseSARisk)
+BaseSARisk
+
+Month3SARisk = data.frame(RSKALC.y, RSKCIG.y, RSKMJ.y)
+Month3SARisk = compositeFun(Month3SARisk)
+mean(Month3SARisk)
+
+ObjectiveBSA = pChange(BaseSARisk, Month3SARisk)
+ObjectiveBSA
+
+BaseHIVRisk = data.frame(RSKANYSEX_UNP.x, RSKSEX_ALCDRG.x, RSKNDL_SHR.x)
+BaseHIVRisk = compositeFun(BaseHIVRisk)
+BaseHIVRisk
+
+Month3HIVRisk = data.frame(RSKANYSEX_UNP.y, RSKSEX_ALCDRG.y, RSKNDL_SHR.y)
+Month3HIVRisk = compositeFun(Month3HIVRisk)
+
+ObjectiveBHIV = pChange(BaseHIVRisk, Month3HIVRisk)
+ObjectiveBHIV
+```
+Objective G: No alcohol.  Percentage of people who are not alcohol at pre and post is not much different or at least lower.
+
+So everyone drinks so just look at the percentage change.
+```{r}
+ObjectiveG = pChange(ALC30D.x, ALC30D.y)
+ObjectiveG
+
+```
+Objective H: Decrese people using unprotected sex
+```{r}
+LASTSEX_UNP = data.frame(LASTSEX_UNP.x, LASTSEX_UNP.y)
+LASTSEX_UNP = subset(LASTSEX_UNP, LASTSEX_UNP.x == 2) 
+attach(LASTSEX_UNP)
+ObjectiveH = pChange(LASTSEX_UNP.x, LASTSEX_UNP.y)
+ObjectiveH
+```
+HCCPE Grant Summary Reports.  Need to reset the data.  Get just the data base, because only grabbing demographics.
+Current enrollments, current 6 month follow up
+```{r}
+#setwd("T:/prevention/STAFF REPORTS 17-18/Chat HIV    FY2/Evaluation")
+#HCCPEDat = read.csv("HCCPEDat.csv", header = TRUE)
+datBASE = subset(HCCPEDat, INTTYPE ==1)
+currentEnroll = dim(datBASE)[1]
+currentEnroll
+
+dat3month = subset(HCCPEDat, INTTYPE == 3)
+followUp = dim(dat3month)[1]
+followUp
+
+```
+Gender
+```{r}
+library(prettyR)
+attach(datBASE)
+test = function(x){
+  x = as.factor(x)
+  count(x)
+}
+test(GENDER)
+GENDER = as.factor(GENDER)
+count(GENDER)
+
+describeCounts = data.frame(GENDER, EDLEVEL_N, R_WHITE_N, R_BLACK_N, E_NONHISPAN, R_ASIAIN_N)
+describeCounts = apply(describeCounts, 2, function(x){describe.factor(x)})
+```
+
 
