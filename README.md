@@ -510,6 +510,7 @@ nationStats = data.frame(apply(nationStats, 2, function(x)(ifelse(x >0, 1, 0))))
 head(nationStats)
 apply(nationStats, 2, mean)
 apply(nationStats, 2, sum)
+# test
 
 ```
 
