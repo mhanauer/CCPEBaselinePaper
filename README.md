@@ -256,6 +256,9 @@ Then turn the sd's into factors so when you plot them they show up as the words 
 ```{r}
 CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 dim(CCPEBaseline)
+#library(devtools)
+#install_github("markhwhiteii/processr")
+
 cig = glm.nb(CIG30D ~ R_WHITE_N + CenterRSKCIG*CenterREL_IMP + AGE  + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
 summary(cig)
 
@@ -344,6 +347,24 @@ mar = glm.nb(MJ30D ~ RSKMJ + R_WHITE_N + CenterRSKMJ_CenterINCOME + CenterRSKMJ_
 summary(mar)
 
 ```
+Trying out process stuff: http://rpubs.com/markhw/processr
+```{r}
+CCPEBaseline = data.frame(na.omit(CCPEBaseline))
+dim(CCPEBaseline)
+CCPEBaselineMarin = CCPEBaseline
+
+#CCPEBaselineMarin$INCOME = factor(CCPEBaselineMarin$INCOME)
+library(processr)
+options(scipen=999)
+#CCPEBaselineMarinTest = model1(iv = "CenterRSKMJ", dv = "MJ30D", mod = "INCOME", data = CCPEBaselineMarin)
+
+CCPEBaselineMarinTest = model1(iv = "INCOME", dv = "MJ30D", mod = "CenterRSKMJ", data = CCPEBaselineMarin)
+CCPEBaselineMarinTest
+
+CCPEBaselineMarGender = CCPEBaseline
+CCPEBaselineMarGender = model1(iv = "GENDER", dv = "MJ30D", "CenterRSKMJ", data = CCPEBaselineMarGender)
+CCPEBaselineMarGender
+```
 Interaction graph for Mar model 
 
 Don't label the values before any regressions, because then it does always code what is code as the effect in the interaction effect.
@@ -355,6 +376,8 @@ dim(CCPEBaseline)
 CCPEBaselineMarin = CCPEBaseline
 
 CCPEBaselineMarin$INCOME = factor(CCPEBaselineMarin$INCOME)
+
+
 mar = glm.nb(MJ30D ~ R_WHITE_N + CenterRSKMJ*INCOME + CenterRSKMJ_CenterGENDER +  AGE  + REL_IMP + SEX_PR+ GENDER , data = CCPEBaselineMarin)
 
 summary(mar)
@@ -437,6 +460,7 @@ Plot.MarIncome
 #maleChange = 1.845172-0.583121	
 #femaleChange = 3.697018-1.841723
 #femaleChange - maleChange
+CCPEBaselineMarin = CCPEBaseline
 
 ```
 
