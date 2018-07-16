@@ -184,7 +184,15 @@ CCPEBaseline = cbind(CCPEBaseline, CenterRSKCIG_CenterR_WHITE_N, CenterRSKCIG_Ce
 summary(CCPEBaseline)
 dim(CCPEBaseline)[1]
 
+range(CCPEBaseline$RSKCIG)
 
+testRSKCig = scale(CCPEBaseline$RSKCIG, scale = FALSE)
+testRSKCigHand = (CCPEBaseline$RSKCIG-mean(CCPEBaseline$RSKCIG))
+range(testRSKCigHand)
+range(testRSKCig)
+describe.factor(CCPEBaseline$RSKCIG)
+mean(RSKCIG)
+range(CCPEBaseline$CenterRSKCIG)
 ```
 Cig model looking for interactions.  I looked for interactions one at time, because the model ran out of degrees of freedom or wouldn't run (not entirly sure, but it would run) with all the interaction terms included so looked at them one at a time.  
 ```{r}
@@ -321,14 +329,16 @@ interact_plot(mar, pred= "CenterRSKMJ", modx = "GENDER", x.label = "Perceived ri
 marIncome = sim_slopes(mar, pred= "CenterRSKMJ", modx = "INCOME", johnson_neyman = TRUE, control.fdr = TRUE, robust = TRUE)
 marIncome
 
-interact_plot(mar,  pred= "CenterRSKMJ", modx = "INCOME", x.label = "Perceived risk of harm from marijuana smoking", y.label = "Predicted values for reported marijuana smoked")
+interact_plot(mar,  pred= "CenterRSKMJ", modx = "INCOME", x.label = "Perceived risk of harm from marijuana smoking", y.label = "Predicted values for reported marijuana smoked", outcome.scale = "link")
 
 
-cigRel = sim_slopes(cigTest, pred = "Risk_Cigarette", modx = "Religious_Importance", johnson_neyman = TRUE, control.fdr = TRUE, robust = TRUE)
+cigRel = sim_slopes(cigTest, pred = "Risk_Cigarette", modx = "Religious_Importance", johnson_neyman = TRUE, control.fdr = TRUE, robust = TRUE, outcome.scale = "link", data = CCPEBaseline)
 cigRel
 
-interact_plot(cigTest, pred = "Risk_Cigarette", modx = "Religious_Importance", x.label = "Perceived risk of harm from cigarette smoking", y.label = "Predicted values for reported cigarettes smoked")
+interact_plot(cigTest, pred = "Risk_Cigarette", modx = "Religious_Importance", x.label = "Perceived risk of harm from cigarette smoking", y.label = "Predicted values for reported cigarettes smoked", outcome.scale = "link", data = CCPEBaseline)
 
+interact_plot(cigTest, pred = "Risk_Cigarette", modx = "Religious_Importance", x.label = "Perceived risk of harm from cigarette smoking", y.label = "Predicted values for reported cigarettes smoked", outcome.scale = "response", data = CCPEBaseline)
+exp(200)
 ```
 Show processr results and how they are the same.
 Trying out process stuff: http://rpubs.com/markhw/processr
