@@ -338,8 +338,42 @@ cigRel
 interact_plot(cigTest, pred = "Risk_Cigarette", modx = "Religious_Importance", x.label = "Perceived risk of harm from cigarette smoking", y.label = "Predicted values for reported cigarettes smoked", outcome.scale = "link", data = CCPEBaseline)
 
 interact_plot(cigTest, pred = "Risk_Cigarette", modx = "Religious_Importance", x.label = "Perceived risk of harm from cigarette smoking", y.label = "Predicted values for reported cigarettes smoked", outcome.scale = "response", data = CCPEBaseline)
-exp(200)
+
 ```
+Now try the code on this website: https://stats.idre.ucla.edu/r/dae/negative-binomial-regression/
+```{r}
+#CCPEBaseline$Religious_Importance = as.factor(CCPEBaseline$Religious_Importance)
+library(jtools)
+CCPEBaseline = data.frame(na.omit(CCPEBaseline))
+colnames(CCPEBaseline)[1] = "Risk_Cigarette" 
+colnames(CCPEBaseline)[8] = "Religious_Importance"
+cigTest = glm.nb(CIG30D ~  R_WHITE_N + Risk_Cigarette*Religious_Importance + AGE  + INCOME + SEX_PR+ GENDER , data = CCPEBaseline)
+summary(cigTest)
+
+
+
+# When we try response we don't get negative values.  Seems like they exp() the link function, which is exactaly what response gives us, so seems like type = "response is what we want"
+newDataResponse = predict(cigTest, CCPEBaseline, type = "response",se.fit = TRUE)
+range(newDataResponse$fit)
+
+newDataLink = predict(cigTest, CCPEBaseline, type = "link",se.fit = TRUE)
+range(newDataLink$fit)
+range(exp(newDataLink$fit))
+
+CCPEBaselinePredict = cbind(CCPEBaseline, newDataResponse)
+
+ggplot(CCPEBaselinePredict, aes(Risk_Cigarette, predCount))+
+  geom_line(aes(colour = factor(Religious_Importance)))
+
+head(newData)
+
+
+# Try with gender and see if you can get similar results
+
+```
+
+
+
 Show processr results and how they are the same.
 Trying out process stuff: http://rpubs.com/markhw/processr
 
