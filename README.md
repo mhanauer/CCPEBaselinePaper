@@ -114,6 +114,39 @@ head(CCPEBaseline)
 
 
 ```
+Final models
+```{r}
+cigNeg1 = hurdle(CIG30D ~ CenterRSKCIG  +R_WHITE_N + CenterAGE + CenterREL_IMP + INCOME + GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
+summary(cigNeg1)
+summary(cigNeg1$fitted.values)
+
+
+marNeg2 = hurdle(MJ30D ~   CenterRSKMJ + R_WHITE_N + CenterRSKMJ*CenterAGE + CenterREL_IMP + INCOME + GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
+summary(marNeg2)
+summary(marNeg2$fitted.values)
+
+bingeNeg = hurdle(BINGE530D ~   CenterRSKALC +R_WHITE_N + CenterAGE + CenterREL_IMP + INCOME + GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
+summary(bingeNeg)
+summary(bingeNeg$fitted.values)
+
+```
+Get the interaction term for cigarette smoking
+```{r}
+
+marNeg2Plot = hurdle(MJ30D ~   RSKMJ + R_WHITE_N + RSKMJ*AGE + CenterREL_IMP + INCOME + GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
+summary(marNeg2Plot)
+
+summary(marNeg2)
+
+interact_plot(marNeg2Plot, pred= "RSKMJ", modx = "AGE", x.label = "Perceived risk of harm from cigarette smoking", y.label = "Predicted values for reported cigarettes smoked")
+
+interact_plot(marNeg2, pred= "CenterRSKMJ", modx = "CenterAGE", x.label = "Perceived risk of harm from cigarette smoking", y.label = "Predicted values for reported cigarettes smoked")
+
+```
+
+
+
+
 Cig model looking for interactions just running all of them at once.
 Theta has to do with the percentage of predicted zeros.  
 
@@ -124,125 +157,167 @@ Lower values of the Log likelihood indicate better model fit: https://www.jmp.co
 
 Here is an example with graph where the graph bar above zero indicates overfitting and vice versa.  It also has : https://data.library.virginia.edu/getting-started-with-negative-binomial-regression-modeling/
 
-So the model fit statistics are saying that the negative binomal is a better fit; however, the predicted values don't make any sense, so I am not sure how the model can be a better fit.
-
-Each of the log theta's is not statistically significant and it seems like that is the dispersion parameter, so I would like a poisson would be fine; however, the other fit statistics seem to indicate the negative binomal model is a better fit.
+Ok so starting out with just main effects for cigarette model.  So negative binomal is the better fitting model
 ```{r}
-
-# Age + Race + Religon + Income + Sex orien + Gender
-cigP = hurdle(CIG30D ~   CenterRSKCIG*R_WHITE_N + CenterRSKCIG*CenterAGE + CenterRSKCIG*CenterREL_IMP + CenterRSKCIG*INCOME + CenterRSKCIG*SEX_PR+ CenterRSKCIG*GENDER , data = CCPEBaseline, dist = "poisson", zero.dist = "binomial")
-summary(cigP)
-
-predHurdleCigP = predict(cigP, type = "response")
-range(predHurdleCigP)
-
-
-interact_plot(cigP, pred= "CenterRSKCIG", modx = "R_WHITE_N", x.label = "Perceived risk of harm from cigarette smoking", y.label = "Predicted values for reported cigarettes smoked")
-
-# Even though the means are different, it could be that at different levels of risk 
-# Also it gets werid at the low ends of risk, because everyone thinks it is risky 8 people who asnwered 1
-describe.factor(CCPEBaseline$RSKCIG)
-compmeans(CCPEBaseline$CIG30D, CCPEBaseline$R_WHITE_N)
-
-
-interact_plot(cigP, pred= "CenterRSKCIG", modx = "CenterREL_IMP", x.label = "Perceived risk of harm from cigarette smoking", y.label = "Predicted values for reported cigarettes smoked")
-
-  
-interact_plot(cigP, pred= "CenterRSKCIG", modx = "GENDER", x.label = "Perceived risk of harm from cigarette smoking", y.label = "Predicted values for reported cigarettes smoked")
-
-
-# Testing showing the conflicting results
-cigNeg = hurdle(CIG30D ~   CenterRSKCIG*R_WHITE_N + CenterRSKCIG*CenterAGE + CenterRSKCIG*CenterREL_IMP + CenterRSKCIG*INCOME + CenterRSKCIG*SEX_PR+ CenterRSKCIG*GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
+cigNeg = hurdle(CIG30D ~   CenterRSKCIG +R_WHITE_N + CenterAGE + CenterREL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
 summary(cigNeg)
-#predHurdleCigNeg = predict(cigNeg, type = "response")
-#range(predHurdleCigNeg)
-#lrtest(cigNeg, cigP)
-#countreg::rootogram(cigP)
-#countreg::rootogram(cigNeg)
+summary(cigNeg$fitted.values)
 
+
+cigP = hurdle(CIG30D ~   CenterRSKCIG +R_WHITE_N + CenterAGE + CenterREL_IMP + INCOME + SEX_PR+ GENDER , data = CCPEBaseline, dist = "poisson", zero.dist = "binomial")
+summary(cigP)
+summary(cigP$fitted.values)
+describe.factor(cigP$fitted.values)
+
+lrtest(cigNeg, cigP)
+AIC(cigNeg)
+AIC(cigP)
+BIC(cigNeg)
+BIC(cigP)
+countreg::rootogram(cigP)
+countreg::rootogram(cigNeg)
 ```
-CenterRSKCIG:R_WHITE_N      1.19635    0.31236   3.830 0.000128 ***
-So this means that whites are decreasing their risk at a much slower rate than others
-
-CenterRSKCIG:CenterREL_IMP  0.39891    0.12467   3.200 0.001375 ** 
-This means that as religion increases they see a smaller decrease relative to those who are less religious
-
-CenterRSKCIG:GENDER        -0.57823    0.19025  -3.039 0.002372 **
-This means that males see a larger decreases as risk increases relative to females
-
-
-
-Try the original poisson versus negative binomal and see if the fit tests are better for underdispered data, probably with what we have below is that the full model for the negative binomal will not converge.
+So let us just try dropping sexual orientation
 ```{r}
-marPReg = glm(MJ30D ~ CenterRSKMJ*R_WHITE_N + CenterRSKMJ*CenterAGE + CenterRSKMJ*CenterREL_IMP + CenterRSKMJ*INCOME + CenterRSKMJ*SEX_PR+ CenterRSKMJ*GENDER, family = "poisson", data = CCPEBaseline) 
-summary(marPReg)
-
-marNegreg = glm.nb(MJ30D ~ CenterRSKMJ*R_WHITE_N + CenterRSKMJ*CenterAGE + CenterRSKMJ*CenterREL_IMP + CenterRSKMJ*INCOME + CenterRSKMJ*SEX_PR+ CenterRSKMJ*GENDER, data = CCPEBaseline)
-summary(cigNegreg)
-
-
-AIC(marPReg)
-AIC(marNegreg)
-
-lrtest(marPReg, marNegreg)
-
-cigPReg = glm(CIG30D ~   CenterRSKCIG*R_WHITE_N + CenterRSKCIG*CenterAGE + CenterRSKCIG*CenterREL_IMP + CenterRSKCIG*INCOME + CenterRSKCIG*SEX_PR+ CenterRSKCIG*GENDER , data = CCPEBaseline, family = "poisson")
-
-cigNegReg = glm.nb(CIG30D ~   CenterRSKCIG*R_WHITE_N + CenterRSKCIG*CenterAGE + CenterRSKCIG*CenterREL_IMP + CenterRSKCIG*INCOME + CenterRSKCIG*SEX_PR+ CenterRSKCIG*GENDER , data = CCPEBaseline)
-summary(cigNegReg)
+cigNeg1 = hurdle(CIG30D ~ CenterRSKCIG  +R_WHITE_N + CenterAGE + CenterREL_IMP + INCOME + GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
+summary(cigNeg1)
+summary(cigNeg1$fitted.values)
 ```
-Mar model same process as with cigarettes.  So werid the negative binomal is actually a better fit and the predicted values make much more sense here.
+
+So now let us try dropping sexual orientation and adding one interaction term 
+White not significant and makes the risk variable not significant
 ```{r}
-describe.factor(CCPEBaseline$MJ30D)
-
-MJP = hurdle(MJ30D ~ CenterRSKMJ*R_WHITE_N + CenterRSKMJ*CenterAGE + CenterRSKMJ*CenterREL_IMP + CenterRSKMJ*INCOME + CenterRSKMJ*SEX_PR+ CenterRSKMJ*GENDER , data = CCPEBaseline, dist = "poisson", zero.dist = "binomial")
-summary(MJP)
-
-#predHurdleMJP = predict(MJP, type = "response")
-#range(predHurdleMJP)
-
-MJNeg = hurdle(MJ30D ~   CenterRSKMJ*R_WHITE_N + CenterRSKMJ*CenterAGE + CenterRSKMJ*CenterREL_IMP + CenterRSKMJ*INCOME + CenterRSKMJ*SEX_PR+ CenterRSKMJ*GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
-summary(MJNeg)
-
-predHurdleMJNeg = predict(MJNeg, type = "response")
-
-
-range(predHurdleMJNeg)
-lrtest(MJNeg, MJP)
-countreg::rootogram(MJP)
-countreg::rootogram(MJNeg)
-
-exp(MJNeg$theta)
+cigNeg2 = hurdle(CIG30D ~ CenterRSKCIG + CenterRSKCIG*R_WHITE_N + CenterAGE + CenterREL_IMP + INCOME + GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
+summary(cigNeg2)
+summary(cigNeg2$fitted.values)
 ```
-Now binge model
+Age interaction, no the risk variable is no long signficant
 ```{r}
-describe.factor(CCPEBaseline$BINGE530D)
+cigNeg3 = hurdle(CIG30D ~ CenterRSKCIG  +R_WHITE_N + CenterRSKCIG*CenterAGE + CenterREL_IMP + INCOME + GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
+summary(cigNeg3)
+summary(cigNeg1$fitted.values)
+```
+Religiuos interaction religious not sig, but risk still is
+```{r}
+cigNeg4 = hurdle(CIG30D ~ CenterRSKCIG  +R_WHITE_N + CenterAGE + CenterRSKCIG*CenterREL_IMP + INCOME + GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
+summary(cigNeg4)
+summary(cigNeg4$fitted.values)
+```
+Try income, no makes risk insignificant
+```{r}
+cigNeg5 = hurdle(CIG30D ~ CenterRSKCIG  +R_WHITE_N + CenterAGE + CenterREL_IMP + CenterRSKCIG*INCOME + GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
+summary(cigNeg5)
+summary(cigNeg5$fitted.values)
+```
+Now try gender, risk still good, but significant for gender
+```{r}
+cigNeg6 = hurdle(CIG30D ~ CenterRSKCIG  +R_WHITE_N + CenterAGE + CenterREL_IMP + INCOME + CenterRSKCIG*GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
+summary(cigNeg6)
+summary(cigNeg6$fitted.values)
+```
+Mar: First compare the poisson with the negative binomal model without any interaction terms
+```{r}
+marNeg = hurdle(MJ30D ~   CenterRSKMJ +R_WHITE_N + CenterAGE + CenterREL_IMP + INCOME + GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
+summary(marNeg)
+summary(marNeg$fitted.values)
 
-bingeP = hurdle(BINGE530D ~ CenterRSKALC*R_WHITE_N + CenterRSKALC*CenterAGE + CenterRSKALC*CenterREL_IMP + CenterRSKALC*INCOME + CenterRSKALC*SEX_PR+ CenterRSKALC*GENDER , data = CCPEBaseline, dist = "poisson", zero.dist = "binomial")
-summary(bingeP)
-bingePPred = predict(bingeP, type = "response")
-range(bingePPred)
 
-bingeNeg = hurdle(BINGE530D ~ CenterRSKALC*R_WHITE_N + CenterRSKALC*CenterAGE + CenterRSKALC*CenterREL_IMP + CenterRSKALC*INCOME + CenterRSKALC*SEX_PR+ CenterRSKALC*GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
+marP = hurdle(MJ30D ~   CenterRSKMJ +R_WHITE_N + CenterAGE + CenterREL_IMP + INCOME + GENDER , data = CCPEBaseline, dist = "poisson", zero.dist = "binomial")
+summary(marP)
+summary(marP$fitted.values)
+describe.factor(marP$fitted.values)
+
+lrtest(marNeg, marP)
+AIC(marNeg)
+AIC(marP)
+BIC(marNeg)
+BIC(marP)
+countreg::rootogram(marP)
+countreg::rootogram(marNeg)
+```
+White interaction, not significant and makes risk not significant
+```{r}
+marNeg1 = hurdle(MJ30D ~   CenterRSKMJ +CenterRSKMJ*R_WHITE_N + CenterAGE + CenterREL_IMP + INCOME + GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
+summary(marNeg1)
+```
+Age interaction, age is significant and risk is still in the right direction.
+```{r}
+marNeg2 = hurdle(MJ30D ~   CenterRSKMJ + R_WHITE_N + CenterRSKMJ*CenterAGE + CenterREL_IMP + INCOME + GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
+summary(marNeg2)
+summary(marNeg2$fitted.values)
+```
+Age + Religion, religion not significant
+```{r}
+marNeg3 = hurdle(MJ30D ~   CenterRSKMJ + R_WHITE_N + CenterRSKMJ*CenterAGE + CenterRSKMJ*CenterREL_IMP + INCOME+ GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
+summary(marNeg3)
+summary(marNeg3$fitted.values)
+```
+Age + income, income not significant
+```{r}
+marNeg4 = hurdle(MJ30D ~   CenterRSKMJ + R_WHITE_N + CenterRSKMJ*CenterAGE + CenterREL_IMP + CenterRSKMJ*INCOME + GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
+summary(marNeg4)
+summary(marNeg4$fitted.values)
+```
+Age + gender, gender not significant 
+```{r}
+marNeg5 = hurdle(MJ30D ~   CenterRSKMJ + R_WHITE_N + CenterRSKMJ*CenterAGE + CenterREL_IMP + INCOME + CenterRSKMJ*GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
+summary(marNeg5)
+summary(marNeg5$fitted.values)
+```
+Binge: First compare the poisson with the negative binomal model without any interaction terms
+```{r}
+bingeNeg = hurdle(BINGE530D ~   CenterRSKALC +R_WHITE_N + CenterAGE + CenterREL_IMP + INCOME + GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
 summary(bingeNeg)
+summary(bingeNeg$fitted.values)
 
-exp(bingeNeg$theta)
 
-bingeNegPred = predict(bingeNeg, type = "response")
-summary(bingeNegPred)
+bingeP = hurdle(BINGE530D ~   CenterRSKALC +R_WHITE_N + CenterAGE + CenterREL_IMP + INCOME + GENDER , data = CCPEBaseline, dist = "poisson", zero.dist = "binomial")
+summary(bingeP)
+summary(bingeP$fitted.values)
+describe.factor(bingeP$fitted.values)
 
-AIC(bingeP)
+lrtest(bingeNeg, bingeP)
 AIC(bingeNeg)
-
-BIC(bingeP)
+AIC(bingeP)
 BIC(bingeNeg)
-
-lrtest(bingeP, bingeNeg)
-
-countreg::rootogram(MJP)
-countreg::rootogram(MJNeg)
-
+BIC(bingeP)
+countreg::rootogram(bingeP)
+countreg::rootogram(bingeNeg)
 ```
+White, not significant
+```{r}
+bingeNeg1 = hurdle(BINGE530D ~   CenterRSKALC +CenterRSKALC*R_WHITE_N + CenterAGE + CenterREL_IMP + INCOME + GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
+summary(bingeNeg1)
+summary(bingeNeg1$fitted.values)
+```
+Age, not significant
+```{r}
+bingeNeg2 = hurdle(BINGE530D ~   CenterRSKALC +R_WHITE_N + CenterRSKALC*CenterAGE + CenterREL_IMP + INCOME + GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
+summary(bingeNeg2)
+summary(bingeNeg2$fitted.values)
+```
+reli, not significant
+```{r}
+bingeNeg3 = hurdle(BINGE530D ~   CenterRSKALC +R_WHITE_N + CenterAGE + CenterRSKALC*CenterREL_IMP + INCOME + GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
+summary(bingeNeg3)
+summary(bingeNeg3$fitted.values)
+```
+Income, not significant
+```{r}
+bingeNeg4 = hurdle(BINGE530D ~   CenterRSKALC +R_WHITE_N + CenterAGE + CenterREL_IMP + CenterRSKALC*INCOME + GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
+summary(bingeNeg4)
+summary(bingeNeg4$fitted.values)
+```
+Gender, not significant
+```{r}
+bingeNeg5 = hurdle(BINGE530D ~   CenterRSKALC +R_WHITE_N + CenterAGE + CenterREL_IMP + INCOME + CenterRSKALC*GENDER , data = CCPEBaseline, dist = "negbin", zero.dist = "binomial")
+summary(bingeNeg5)
+summary(bingeNeg5$fitted.values)
+```
+
+
+
+
 
 Now get the comparison to the national statistics.  So change CIG30D, CIG30D, and BINGE30 to 1 and 0's with any value above you being 1 and then get the mean and compare to national statistics.
 
