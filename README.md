@@ -96,6 +96,12 @@ describeCounts
 round(mean(CCPEBaseline$AGE),2)
 round(sd(CCPEBaseline$AGE),2)
 
+# Gender, race, income religous importance
+compmeans(CCPEBaseline$AGE, CCPEBaseline$GENDER)
+compmeans(CCPEBaseline$AGE, CCPEBaseline$R_WHITE_N)
+compmeans(CCPEBaseline$AGE, CCPEBaseline$INCOME)
+compmeans(CCPEBaseline$AGE, CCPEBaseline$REL_IMP)
+
 ```
 
 
