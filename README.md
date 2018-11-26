@@ -35,9 +35,31 @@ CCPEBaseline = read.csv("CCPEBaselineFull.csv", header = TRUE)
 dim(CCPEBaseline)
 #
 
+CCPEBaselineDemo = CCPEBaseline[c("RSKCIG","CIG30D","MJ30D","RSKMJ", "BINGE530D",	"RSKALC",	"R_WHITE_N",	"REL_IMP", "HINCOMEO_N","SEX_PR", "GENDER",	"YOB", "R_BLACK_N", "R_ASIAIN_N", "E_NONHISPAN")]
+
+
+
+
+
+CCPEBaselineDemo = CCPEBaselineDemo[1:744,]
+write.csv(CCPEBaselineDemo, "CCPEBaselineDemo.csv", row.names = FALSE)
+CCPEBaselineDemo = read.csv("CCPEBaselineDemo.csv", header = TRUE, na.strings = c(NA, 98, 99, 77, 97, " "))
+CCPEBaselineDemo = na.omit(CCPEBaselineDemo)
+dim(CCPEBaselineDemo)
+
+CCPEBaselineDemo$GENDER = ifelse(CCPEBaselineDemo$GENDER > 2, NA, CCPEBaselineDemo$GENDER)
+CCPEBaselineDemo$GENDER = ifelse(CCPEBaselineDemo$GENDER == 1, 1, 0)
+CCPEBaselineDemo = na.omit(CCPEBaselineDemo)
+dim(CCPEBaselineDemo)
+
+describe(CCPEBaselineDemo)
+
+#### Now back to regular data analysis ######################
 CCPEBaseline = CCPEBaseline[c("RSKCIG","CIG30D","MJ30D","RSKMJ", "BINGE530D",	"RSKALC",	"R_WHITE_N",	"REL_IMP", "HINCOMEO_N","SEX_PR", "GENDER",	"YOB")]
 
 dim(CCPEBaseline)
+
+
 
 CCPEBaseline = CCPEBaseline[1:744,]
 write.csv(CCPEBaseline, "CCPEBaseline.csv", row.names = FALSE)
@@ -46,7 +68,8 @@ CCPEBaseline = na.omit(CCPEBaseline)
 dim(CCPEBaseline)
 #CCPEBaseline = data.frame(na.omit(CCPEBaseline))
 #dim(CCPEBaseline)
-
+516-588
+0.8776-1
 ```
 Drop anyone who is not male or female.  So subset the data where gender equals 1 or 2
 Lose 3 total people.  1 equals male and 2 equals female.  Need to read and write the dataset to get the variables to be factors.  Also, changing gender to be 1 for male and 0 for female.
@@ -101,7 +124,6 @@ compmeans(CCPEBaseline$AGE, CCPEBaseline$GENDER)
 compmeans(CCPEBaseline$AGE, CCPEBaseline$R_WHITE_N)
 compmeans(CCPEBaseline$AGE, CCPEBaseline$INCOME)
 compmeans(CCPEBaseline$AGE, CCPEBaseline$REL_IMP)
-
 ```
 
 
