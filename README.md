@@ -65,8 +65,6 @@ TestMCARNormality(CCPEBaseline)
 
 data.frame(apply(CCPEBaseline, 2, function(col)sum(is.na(col))/length(col)))
 
-
-CCPEBaseline
 ```
 
 
@@ -130,7 +128,7 @@ CCPEBaselineMeanCenter = scale(CCPEBaselineMeanCenter, scale = FALSE)
 head(CCPEBaselineMeanCenter)
 
 
-colnames(CCPEBaselineMeanCenter) = c("CenterRSKCIG", "CenterCIG30D", "CenterMJ30D", "CenterRSKMJ", "CenterBINGE530D", "CenterRSKALC", "CenterR_WHITE_N", "CenterREL_IMP", "CenterSEX_PR", "CenterGENDER", "CenterYOB", "CenterAGE", "CenterINCOME")
+colnames(CCPEBaselineMeanCenter) = c("CenterRSKCIG", "CenterCIG30D", "CenterMJ30D", "CenterRSKMJ", "CenterBINGE530D", "CenterRSKALC", "CenterR_WHITE_N", "CenterREL_IMP", "CenterSEX_PR", "CenterGENDER", "CenterAGE", "CenterINCOME")
 
 CCPEBaseline = data.frame(CCPEBaselineMeanCenter, CCPEBaseline)
 head(CCPEBaseline)
