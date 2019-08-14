@@ -91,25 +91,19 @@ sd_age = sd(Age_cat)
 
 Age_cat_code = ifelse(Age_cat <= mean_age - sd_age, "-1sd", ifelse(Age_cat <= mean_age + sd_age, "Mean", ifelse(Age_cat >= mean_age + sd_age, "+1sd", 0)))
 describe.factor(Age_cat_code)
-
-
-
-Age_test = data.frame(Age_cat_code, Age_cat)
-Age_test
-
-compmeans(CCPEBaseline$RSKCIG, Age_cat)
+compmeans(CCPEBaseline$RSKCIG, Age_cat_code)
 ##Mar
 compmeans(CCPEBaseline$RSKMJ, CCPEBaseline$R_WHITE_N)
 compmeans(CCPEBaseline$RSKMJ, CCPEBaseline$REL_IMP)
 compmeans(CCPEBaseline$RSKMJ, CCPEBaseline$GENDER)
-Age_cat = ifelse(Age_cat > median(Age_cat), 1, 0)
-compmeans(CCPEBaseline$RSKMJ, Age_cat)
+compmeans(CCPEBaseline$RSKMJ, Age_cat_code)
+
 ##Alc
 compmeans(CCPEBaseline$RSKALC, CCPEBaseline$R_WHITE_N)
 compmeans(CCPEBaseline$RSKALC, CCPEBaseline$REL_IMP)
 compmeans(CCPEBaseline$RSKALC, CCPEBaseline$GENDER)
-Age_cat = ifelse(Age_cat > median(Age_cat), 1, 0)
-compmeans(CCPEBaseline$RSKALC, Age_cat)
+compmeans(CCPEBaseline$RSKALC, Age_cat_code)
+
 ```
 
 
@@ -158,9 +152,14 @@ wilcox.test(religion2_4$RSKCIG ~religion2_4$REL_IMP)
 
 wilcox.test(CCPEBaseline$RSKCIG ~ CCPEBaseline$GENDER)
 ## Categorize age by -1sd mean +1sd
-Age_cat  = CCPEBaseline$AGE
-Age_cat = ifelse(Age_cat > median(Age_cat), 1, 0)
-wilcox.test(CCPEBaseline$RSKCIG ~ Age_cat)
+CCPEBaseline_age = data.frame(RSKCIG = CCPEBaseline$RSKCIG, Age_cat_code)
+CCPEBaseline_age_1_mean = subset(CCPEBaseline_age, Age_cat_code == "-1sd" | Age_cat_code == "Mean")
+wilcox.test(CCPEBaseline_age_1_mean$RSKCIG ~ CCPEBaseline_age_1_mean$Age_cat_code)
+CCPEBaseline_age_1_1 = subset(CCPEBaseline_age, Age_cat_code == "-1sd" | Age_cat_code == "+1sd")
+wilcox.test(CCPEBaseline_age_1_1$RSKCIG ~ CCPEBaseline_age_1_1$Age_cat_code)
+CCPEBaseline_age_Mean_1 = subset(CCPEBaseline_age, Age_cat_code == "Mean" | Age_cat_code == "+1sd")
+wilcox.test(CCPEBaseline_age_Mean_1$RSKCIG ~ CCPEBaseline_age_Mean_1$Age_cat_code)
+
 ###############M Mar
 wilcox.test(CCPEBaseline$RSKMJ ~ CCPEBaseline$R_WHITE_N)
 #### Religion
@@ -182,9 +181,14 @@ wilcox.test(religion2_4$RSKMJ ~religion2_4$REL_IMP)
 
 wilcox.test(CCPEBaseline$RSKMJ ~ CCPEBaseline$GENDER)
 ## Categorize age by -1sd mean +1sd
-Age_cat  = CCPEBaseline$AGE
-Age_cat = ifelse(Age_cat > median(Age_cat), 1, 0)
-wilcox.test(CCPEBaseline$RSKMJ ~ Age_cat)
+CCPEBaseline_age = data.frame(RSKMJ  = CCPEBaseline$RSKMJ , Age_cat_code)
+CCPEBaseline_age_1_mean = subset(CCPEBaseline_age, Age_cat_code == "-1sd" | Age_cat_code == "Mean")
+wilcox.test(CCPEBaseline_age_1_mean$RSKMJ  ~ CCPEBaseline_age_1_mean$Age_cat_code)
+CCPEBaseline_age_1_1 = subset(CCPEBaseline_age, Age_cat_code == "-1sd" | Age_cat_code == "+1sd")
+wilcox.test(CCPEBaseline_age_1_1$RSKMJ  ~ CCPEBaseline_age_1_1$Age_cat_code)
+CCPEBaseline_age_Mean_1 = subset(CCPEBaseline_age, Age_cat_code == "Mean" | Age_cat_code == "+1sd")
+wilcox.test(CCPEBaseline_age_Mean_1$RSKMJ  ~ CCPEBaseline_age_Mean_1$Age_cat_code)
+
 
 ###############M Alc
 wilcox.test(CCPEBaseline$RSKALC ~ CCPEBaseline$R_WHITE_N)
@@ -207,9 +211,13 @@ wilcox.test(religion2_4$RSKALC ~religion2_4$REL_IMP)
 
 wilcox.test(CCPEBaseline$RSKALC ~ CCPEBaseline$GENDER)
 ## Categorize age by -1sd mean +1sd
-Age_cat  = CCPEBaseline$AGE
-Age_cat = ifelse(Age_cat > median(Age_cat), 1, 0)
-wilcox.test(CCPEBaseline$RSKALC ~ Age_cat)
+CCPEBaseline_age = data.frame(RSKALC = CCPEBaseline$RSKALC, Age_cat_code)
+CCPEBaseline_age_1_mean = subset(CCPEBaseline_age, Age_cat_code == "-1sd" | Age_cat_code == "Mean")
+wilcox.test(CCPEBaseline_age_1_mean$RSKALC ~ CCPEBaseline_age_1_mean$Age_cat_code)
+CCPEBaseline_age_1_1 = subset(CCPEBaseline_age, Age_cat_code == "-1sd" | Age_cat_code == "+1sd")
+wilcox.test(CCPEBaseline_age_1_1$RSKALC ~ CCPEBaseline_age_1_1$Age_cat_code)
+CCPEBaseline_age_Mean_1 = subset(CCPEBaseline_age, Age_cat_code == "Mean" | Age_cat_code == "+1sd")
+wilcox.test(CCPEBaseline_age_Mean_1$RSKALC ~ CCPEBaseline_age_Mean_1$Age_cat_code)
 
 ```
 
