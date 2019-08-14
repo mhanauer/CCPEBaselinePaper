@@ -84,7 +84,19 @@ Get descriptives and sds for each
 compmeans(CCPEBaseline$RSKCIG, CCPEBaseline$R_WHITE_N)
 compmeans(CCPEBaseline$RSKCIG, CCPEBaseline$REL_IMP)
 compmeans(CCPEBaseline$RSKCIG, CCPEBaseline$GENDER)
-Age_cat = ifelse(Age_cat > median(Age_cat), 1, 0)
+
+Age_cat = CCPEBaseline$AGE
+mean_age = mean(Age_cat)
+sd_age = sd(Age_cat)
+
+Age_cat_code = ifelse(Age_cat <= mean_age - sd_age, "-1sd", ifelse(Age_cat <= mean_age + sd_age, "Mean", ifelse(Age_cat >= mean_age + sd_age, "+1sd", 0)))
+describe.factor(Age_cat_code)
+
+
+
+Age_test = data.frame(Age_cat_code, Age_cat)
+Age_test
+
 compmeans(CCPEBaseline$RSKCIG, Age_cat)
 ##Mar
 compmeans(CCPEBaseline$RSKMJ, CCPEBaseline$R_WHITE_N)
