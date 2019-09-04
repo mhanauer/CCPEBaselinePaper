@@ -33,9 +33,8 @@ setwd("S:/Indiana Research & Evaluation/Matthew Hanauer/CCPEPaperData")
 CCPEBaseline = read.csv("CCPEBaselineFull.csv", header = TRUE)
 dim(CCPEBaseline)
 #
-
 #### Now back to regular data analysis ######################
-CCPEBaseline = CCPEBaseline[c("RSKCIG","CIG30D","MJ30D","RSKMJ", "BINGE530D",	"RSKALC",	"R_WHITE_N",	"REL_IMP", "GENDER",	"YOB")]
+CCPEBaseline = CCPEBaseline[c("RSKCIG","CIG30D","MJ30D","RSKMJ", "BINGE530D",	"RSKALC",	"R_WHITE_N",	"REL_IMP", "GENDER",	"YOB", "R_BLACK_N", "R_ASIAIN_N")]
 
 
 dim(CCPEBaseline)
@@ -60,12 +59,10 @@ Now evaluate the percentage of missing data
 ```{r}
 CCPEBaseline_Complete = na.omit(CCPEBaseline)
 dim(CCPEBaseline_Complete)[1]/dim(CCPEBaseline)[1]
-
 library(MissMech)
 TestMCARNormality(CCPEBaseline)
 
 data.frame(apply(CCPEBaseline, 2, function(col)sum(is.na(col))/length(col)))
-
 ```
 
 
@@ -75,7 +72,7 @@ Lose 3 total people.  1 equals male and 2 equals female.  Need to read and write
 So I need to change the values greater than 2 to -999 so I can subset those values and figure out which rows I need to delete.  Remember to find the deleted rows, I need to create a new data set and subset which values are -999 so I can find the rows and delete them below
 ```{r}
 CCPEBaseline = na.omit(CCPEBaseline)
-CCPEBaseline$GENDER = ifelse(CCPEBaseline$GENDER == 1, 1, 0)
+CCPEBaseline$GENDER = ifelse(CCPEBaseline$GENDER == 2, 1, 0)
 dim(CCPEBaseline)
 ```
 Get descriptives and sds for each
@@ -115,7 +112,7 @@ round(apply(CCPEBaselineCount, 2, sd),2)
 
 ## Now create for binary and ordinal
 library(prettyR)
-describeCounts = data.frame(R_WHITE_N = CCPEBaseline$R_WHITE_N, REL_IMP = CCPEBaseline$REL_IMP,GENDER= CCPEBaseline$GENDER)
+describeCounts = data.frame(R_WHITE_N = CCPEBaseline$R_WHITE_N, REL_IMP = CCPEBaseline$REL_IMP,GENDER= CCPEBaseline$GENDER, R_BLACK_N = CCPEBaseline$R_BLACK_N, R_ASIAIN_N = CCPEBaseline$R_ASIAIN_N)
 describeCounts = apply(describeCounts, 2, function(x){describe.factor(x)})
 describeCounts
 
@@ -230,6 +227,8 @@ Renaming the variables, because they are now centered so I don't want to confuse
 Creating interaction variables, because they are easier to include in the code.  See cigarette model below the interaction terms that I created here produce the same results as including the actual interaction term in the model.
 ```{r}
 CCPEBaselineMeanCenter = CCPEBaseline
+CCPEBaselineMeanCenter$R_BLACK_N = NULL
+CCPEBaselineMeanCenter$R_ASIAIN_N = NULL
 head(CCPEBaselineMeanCenter)
 
 
